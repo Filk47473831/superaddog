@@ -264,23 +264,28 @@
     })
     
     function copyToClipboard(data) {
+      
       var br = /<br>/gi;
       data = data.replace(br, '\n')
       data = data.substring(0, data.length - 2)
       
+      if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+        navigator.clipboard.writeText(data).then(() => {
+            // on success
+        }, (e) => {
+            // on error
+        });
+        document.execCommand("copy")
+      } else {
+        
       var data = [new ClipboardItem({
         "text/plain": new Blob([data], {
           type: "text/plain"
         })
-      })];
+      })]
       navigator.clipboard.write(data)
-      
-      navigator.clipboard.writeText(data).then(() => {
-          // on success
-      }, (e) => {
-          // on error
-      });
-      document.execCommand("copy")
+      }
+
     }
     
     function calculateUsername(firstName, lastName) {
