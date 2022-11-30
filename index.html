@@ -274,6 +274,13 @@
         })
       })];
       navigator.clipboard.write(data)
+      
+      navigator.clipboard.writeText(data).then(() => {
+          // on success
+      }, (e) => {
+          // on error
+      });
+      document.execCommand("copy")
     }
     
     function calculateUsername(firstName, lastName) {
