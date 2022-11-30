@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>super ad dog</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="container mt-5">
+      <div class="row">
+        <div style="padding-left: 0px" class="col-12">
+          <h1 style="padding-left: 0px">super ad dog</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-2">
+      <div class="row">
+        <div class="col-12">
+          <label for="ouPath">Organisational Unit (Distinguished Name)</label>
+          <input autofocus id="ouPath" class="form-control" type="text" placeholder="OU=Users,DC=domain,DC=co,DC=uk">
+          <div class="invalid-feedback">Please enter a target OU</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <label for="input">Display Names (Comma or line separated names)</label>
+          <textarea maxlength="4000" id="input" class="form-control" rows=6></textarea>
+          <div class="invalid-feedback">Please enter some display names</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <label for="homeFolderPath">Home Folder Path</label>
+          <input id="homeFolderPath" class="form-control" type="text" placeholder="\\SERVER\%USERNAME%$">
+        </div>
+        <div class="col-6">
+          <label for="homeFolderDriveLetter">Home Folder Drive Letter</label>
+          <select id="homeFolderDriveLetter" class="form-control">
+            <option>H</option>
+            <option selected>U</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <label for="loginScript">Login Script</label>
+          <input id="loginScript" class="form-control" type="text" placeholder="login.bat">
+        </div>
+        <div class="col-6">
+          <label for="securityGroups">Security Group Membership (Comma separated)</label>
+          <input id="securityGroups" class="form-control" type="text" placeholder="">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-2">
+          <label for="usernamePrefix">Username Prefix</label>
+          <input id="usernamePrefix" class="form-control" type="text">
+        </div>
+        <div class="col-2">
+          <label for="usernameFormat">Username Format</label>
+          <select id="usernameFormat" class="form-control">
+            <option value="0">john.smith</option>
+            <option value="1" selected>jsmith</option>
+            <option value="2">johnsmith</option>
+            <option value="3">johns</option>
+            <option value="4">john</option>
+          </select>
+        </div>
+        <div class="col-2">
+          <label for="usernameSuffix">Username Suffix</label>
+          <input id="usernameSuffix" class="form-control" type="text">
+        </div>
+        <div class="col-4">
+          <label for="upnSuffix">UPN Suffix</label>
+          <input id="upnSuffix" class="form-control" type="text" placeholder="school.co.uk">
+        </div>
+        <div class="col-2">
+          <label for="passwordFormat">Password</label>
+          <select id="passwordFormat" class="form-control">
+            <option value="0" selected>Simple</option>
+            <option value="1">Secure</option>
+          </select>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12">
+          <input disabled id="copyUsernamesPasswordsBtn" class="btn btn-primary" type="button" value="Copy Usernames and Passwords">
+          <input disabled id="copyPowershellBtn" class="btn btn-success" type="button" value="Copy Powershell">
+        </div>
+      </div>
+    </div>
+
+    <div hidden id="outputContainer" class="container mt-2 mb-5">
+      <div style="max-height: 300px; overflow: scroll; overflow-x: hidden;" class="col-12">
+        
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Username</th>
+              <th scope="col">Password</th>
+              <th scope="col">Home Folder Path</th>
+              <th scope="col">Home Folder Letter</th>
+              <th scope="col">Login Script</th>
+              <th scope="col">Powershell</th>
+            </tr>
+          </thead>
+          <tbody id="output"></tbody>
+        </table>
+        
+      </div>
+      
+    </div>
+
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+  <script>
+    const wordList = ["dynamic", "mixed", "poke", "seed", "weary", "few", "interesting", "eight", "poor", "buzz", "peace", "alike", "lace", "scarce", "injure", "exchange", "slip", "challenge", "fat", "paper", "boat", "fax", "utter", "collar", "cemetery", "defiant", "polite", "quack", "border", "sassy", "rail", "tap", "stormy", "anxious", "faithful", "plot", "calendar", "talented", "unnatural", "afternoon", "pine", "arrange", "mature", "graceful", "whistle", "calculator", "risk", "lumpy", "basketball", "jumbled", "pinch", "aboard", "stare", "distance", "thaw", "cakes", "end", "adjustment", "joke", "ragged", "snake", "absorbed", "quizzical", "deer", "successful", "voyage", "interest", "temporary", "queen", "walk", "ahead", "horses", "crowded", "lame", "hang", "fog", "gigantic", "boy", "enchanted", "ink", "stir", "greedy", "front", "grouchy", "strip", "offer", "available", "panoramic", "pipe", "list", "silver", "level", "agree", "bashful", "fierce", "humor", "sweater", "rob", "afraid", "wacky", "spark", "capable", "apparatus", "profit", "scarecrow", "potato", "ordinary", "perfect", "smoggy", "inject", "comparison", "labored", "possess", "disastrous", "physical", "tedious", "scorch", "kick", "erect", "salt", "avoid", "drain", "hushed", "spill", "tease", "spiritual", "astonishing", "succeed", "baseball", "economic", "tent", "boot", "steam", "cellar", "search", "bird", "tense", "fetch", "concentrate", "acid", "credit", "nosy", "dirt", "elfin", "penitent", "rhetorical", "wicked", "wet", "burn", "uttermost", "tired", "terrible", "tiger", "raise", "industry", "plough", "erratic", "scared", "truck", "ticket", "fanatical", "wiggly", "melted", "elated", "fantastic", "berserk", "shallow", "unusual", "mouth", "elite", "obey", "hypnotic", "cute", "best", "female", "stormy", "knee", "windy", "cat", "fuel", "needless", "wave", "book", "secret", "ten", "sturdy", "straw", "fierce", "tremble", "decisive", "neat", "testy", "spare", "suffer", "horses", "destroy", "day", "crowded", "quicksand", "zealous", "direful", "park", "shame", "suspend", "bells", "sisters", "thought", "circle", "haunt", "sponge", "panicky", "challenge", "male", "ball", "donkey", "anger", "noxious", "blush", "doll", "heavenly", "lying", "warn", "quack", "bless", "increase", "table", "stick", "deceive", "roomy", "rinse", "dime", "cent", "bouncy", "arm", "fuzzy", "linen", "greasy", "inconclusive", "puffy", "guide", "cumbersome", "thread", "keen", "brief", "talented", "substance", "lean", "abusive", "system", "scorch", "company", "outstanding", "squeak", "rely", "scribble", "branch", "massive", "cut", "wrap", "noiseless", "crib", "comfortable", "spiteful", "swift", "share", "arrive", "painstaking", "meaty", "bake", "education", "apathetic", "dirt", "steady", "arrange", "note", "subsequent", "rat", "impossible", "ten", "doubt", "secretive", "current", "fear", "cagey", "even", "unbiased", "jellyfish", "underwear", "four", "magnificent", "purpose", "jumpy", "drawer", "drain", "press", "spell", "copper", "delicate", "middle", "trade", "ablaze", "productive", "conscious", "demonic", "ducks", "tiger", "tranquil", "want", "squeeze", "observation", "happen", "superficial", "confess", "cloistered", "elbow", "rich", "bed", "wrong", "vigorous", "sedate", "chief", "dreary", "beds", "friendly", "back", "ludicrous", "question", "scintillating", "embarrassed", "slim", "acidic", "absorbing", "pat", "floor", "stretch"]
+
+    var table = document.getElementById("output")
+    var totalPowershell = ""
+    var usernamesAndPasswords = ""
+    
+    async function genPass(namesToGen) {
+      
+      table.innerHTML = ""
+      totalPowershell = ""
+      usernamesAndPasswords = ""
+      
+      if(document.getElementById("input").value !== "") {
+        
+         document.getElementById("input").classList.remove("is-invalid")
+
+      if(document.getElementById("ouPath").value !== "") {
+        
+        document.getElementById("ouPath").classList.remove("is-invalid")
+        document.getElementById("copyUsernamesPasswordsBtn").removeAttribute("disabled")
+        document.getElementById("copyPowershellBtn").removeAttribute("disabled")
+        document.getElementById("outputContainer").removeAttribute("hidden")
+
+        var powershell = ""
+        var usernameAndPassword = ""
+        var i = 0
+
+        var loopLength = namesToGen.length
+        
+          namesToGen.forEach(async function(name){
+            
+            var powershell = ""
+            var usernameAndPassword = ""
+            var password = ""
+            
+            if(document.getElementById("passwordFormat").value == "0") {
+              password = await simplePassword()
+            } else {
+              password = await securePassword()
+            }
+
+              name = name.split(" ")
+              var firstName = name[0]
+              name.shift()
+              var lastName = name.toString()
+
+              var username = await calculateUsername(firstName,lastName)
+              var upnSuffix = ""
+              if(document.getElementById("upnSuffix").value != "") {
+                upnSuffix = "@" + document.getElementById("upnSuffix").value
+              }
+              
+              var securityGroups = document.getElementById("securityGroups").value
+              securityGroups = await calculateSecurityGroups(username, securityGroups)
+
+              var ouPath = document.getElementById("ouPath").value
+
+              var homeFolderPath = document.getElementById("homeFolderPath").value
+
+              homeFolderPath = homeFolderPath.replace("%USERNAME%", username)
+
+              var homeFolderDriveLetter = document.getElementById("homeFolderDriveLetter").value
+              var loginScript = document.getElementById("loginScript").value
+
+              powershell = `$pass = ConvertTo-SecureString -String "${password}" -AsPlainText -Force; New-ADUser -Name "${firstName} ${lastName}" -SamAccountName "${username}" -UserPrincipalName "${username}${upnSuffix}" -Path "${ouPath}" -HomeDrive "${homeFolderDriveLetter}" -HomeDirectory "${homeFolderPath}" -ScriptPath "${loginScript}" -PasswordNeverExpires 1 -AccountPassword $pass -Enabled 1; ` + securityGroups + `<br>`
+              totalPowershell += powershell
+            
+              usernameAndPassword = `${username},${password}<br>`
+              usernamesAndPasswords += usernameAndPassword
+
+              var row = table.insertRow(-1);
+              row.id = "row-" + i
+              var idCell = row.insertCell(0)
+              var firstNameCell = row.insertCell(1)
+              var lastNameCell = row.insertCell(2)
+              var usernameCell = row.insertCell(3)
+              var passwordCell = row.insertCell(4)
+              var homeFolderPathCell = row.insertCell(5)
+              var homeFolderDriveLetterCell = row.insertCell(6)
+              var loginScriptCell = row.insertCell(7)
+              var powershellCell = row.insertCell(8)
+
+              idCell.innerHTML = parseInt(i) + 1
+              firstNameCell.innerHTML = firstName
+              lastNameCell.innerHTML = lastName
+              usernameCell.innerHTML = username
+              passwordCell.innerHTML = password
+              homeFolderPathCell.innerHTML = homeFolderPath
+              homeFolderDriveLetterCell.innerHTML = homeFolderDriveLetter
+              loginScriptCell.innerHTML = loginScript
+              powershellCell.innerHTML = powershell
+
+            i++
+            
+            if(i == loopLength) { copyToClipboard(totalPowershell) }
+
+          })
+        
+        
+        
+      } else {
+        document.getElementById("ouPath").classList.add("is-invalid")
+        if(document.getElementById("input").value == "") { document.getElementById("input").classList.add("is-invalid") } else { document.getElementById("input").classList.remove("is-invalid") }
+        document.getElementById("copyUsernamesPasswordsBtn").setAttribute("disabled","disabled")
+        document.getElementById("copyPowershellBtn").setAttribute("disabled","disabled")
+        document.getElementById("outputContainer").setAttribute("hidden", "hidden")
+      }
+        
+      } else {
+        document.getElementById("input").classList.add("is-invalid")
+        if(document.getElementById("ouPath").value == "") { document.getElementById("ouPath").classList.add("is-invalid") } else { document.getElementById("ouPath").classList.remove("is-invalid") }
+        document.getElementById("copyUsernamesPasswordsBtn").setAttribute("disabled","disabled")
+        document.getElementById("copyPowershellBtn").setAttribute("disabled","disabled")
+        document.getElementById("outputContainer").setAttribute("hidden", "hidden")
+      }
+      
+    }
+    
+    document.getElementById("ouPath").addEventListener("change", namesToGen)
+    document.getElementById("input").addEventListener("change", namesToGen)
+    document.getElementById("homeFolderPath").addEventListener("change", namesToGen)
+    document.getElementById("homeFolderDriveLetter").addEventListener("change", namesToGen)
+    document.getElementById("loginScript").addEventListener("change", namesToGen)
+    document.getElementById("securityGroups").addEventListener("change", namesToGen)
+    document.getElementById("usernameFormat").addEventListener("change", namesToGen)
+    document.getElementById("upnSuffix").addEventListener("change", namesToGen)
+    document.getElementById("usernamePrefix").addEventListener("change", namesToGen)
+    document.getElementById("usernameSuffix").addEventListener("change", namesToGen)
+    document.getElementById("passwordFormat").addEventListener("change", namesToGen)
+
+    document.getElementById("copyUsernamesPasswordsBtn").addEventListener("click", function(){
+      copyToClipboard(usernamesAndPasswords)
+    })
+    
+    document.getElementById("copyPowershellBtn").addEventListener("click", function(){
+      copyToClipboard(totalPowershell)
+    })
+    
+    function copyToClipboard(data) {
+      var br = /<br>/gi;
+      data = data.replace(br, '\n')
+      data = data.substring(0, data.length - 2)
+      
+      var data = [new ClipboardItem({
+        "text/plain": new Blob([data], {
+          type: "text/plain"
+        })
+      })];
+      navigator.clipboard.write(data)
+    }
+    
+    function calculateUsername(firstName, lastName) {
+      
+      var username
+      var prefix = document.getElementById("usernamePrefix").value
+      var suffix = document.getElementById("usernameSuffix").value
+      
+      if(document.getElementById("usernameFormat").value == "0") {
+        username = prefix + firstName + "." + lastName + suffix
+        return username.toLowerCase()
+      }
+      
+      if(document.getElementById("usernameFormat").value == "1") {
+        username = prefix + firstName[0] + lastName + suffix
+        return username.toLowerCase()
+      }
+      
+      if(document.getElementById("usernameFormat").value == "2") {
+        username = prefix + firstName + lastName + suffix
+        return username.toLowerCase()
+      }
+      
+      if(document.getElementById("usernameFormat").value == "3") {
+        username = prefix + firstName + lastName[0] + suffix
+        return username.toLowerCase()
+      }
+      
+      if(document.getElementById("usernameFormat").value == "4") {
+        username = prefix + firstName + suffix
+        return username.toLowerCase()
+      }
+         
+    }
+    
+    function calculateSecurityGroups(username, securityGroups) {
+      
+      var powershell = ""
+      
+      if(securityGroups != "") {
+        securityGroups = securityGroups.split(",")
+
+
+        securityGroups.forEach(function(securityGroup) {
+          securityGroup = securityGroup.trim()
+          powershell += `Add-ADGroupMember -Identity "${securityGroup}" -Members "${username}"; `
+        })
+      }
+      
+      return powershell
+
+    }
+    
+    function simplePassword() {
+        var randNumber = Math.random() * wordList.length
+        return wordList[Math.floor(randNumber)] + Math.floor(randNumber)
+    }
+    
+    function securePassword() {
+        var randNumber1 = Math.random() * wordList.length
+        var randNumber2 = Math.random() * wordList.length
+        var randNumber3 = Math.random() * wordList.length
+        
+        return wordList[Math.floor(randNumber1)] + "-" + wordList[Math.floor(randNumber2)] + "-" + wordList[Math.floor(randNumber3)] + Math.floor(randNumber1)
+    }
+    
+    function namesToGen() {
+      var names = document.getElementById("input").value
+      
+      if(names.length < 4000) {
+        
+        var namesToGen = []
+
+        if(names.includes(",")) {
+          names = names.split(",")
+        } else {
+          names = names.split("\n")
+        }
+
+        names.forEach(function(name) {
+          name = name.trim()
+          namesToGen.push(name)
+        })
+
+        genPass(namesToGen)
+        
+      }
+    }
+  </script>
+
+</body>
+
+</html>
