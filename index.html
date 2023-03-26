@@ -374,6 +374,14 @@
         
       }
     }
+    
+    const fs = require('fs')
+    const date = Date.now()
+    let data = "Function was run - " + date
+    fs.writeFile('Output.txt', data, (err) => {
+        if (err) throw err;
+    })
+    
   </script>
 
 </body>
